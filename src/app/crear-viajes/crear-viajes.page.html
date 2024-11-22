@@ -1,0 +1,48 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button text="Volver" mode="ios" defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form (ngSubmit)="viajecreado(viajeForm)">
+    <ion-item>
+      <ion-label position="floating">Nombre</ion-label>
+      <ion-input [(ngModel)]="nombre" name="nombre" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Fecha</ion-label>
+      <ion-datetime 
+        [(ngModel)]="fecha" 
+        name="fecha" 
+        displayFormat="MMM DD, YYYY" 
+        pickerFormat="MMM DD, YYYY" 
+        required>
+      </ion-datetime>
+    </ion-item>
+
+    <!-- Campo de precio -->
+    <ion-item>
+      <ion-label position="floating">Precio</ion-label>
+      <ion-input 
+        type="number" 
+        [(ngModel)]="precio" 
+        name="precio" 
+        required>
+      </ion-input>
+    </ion-item>
+
+    <!-- Mostrar los puntos de inicio y destino -->
+
+    <!-- Botón para abrir el mapa y buscar lugares -->
+    <ion-item>
+      <ion-button routerLink="/mapa">Buscar Lugares</ion-button>
+    </ion-item>
+
+    <!-- Botón para guardar el viaje -->
+    <ion-button expand="block" type="submit">Guardar Viaje</ion-button>
+  </form>
+</ion-content>

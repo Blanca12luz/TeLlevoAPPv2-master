@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ViajeService } from '../services/viaje.service';
+import { ViajeService } from '../../services/viaje.service';
 @Component({
   selector: 'app-crear-viajes',
   templateUrl: './crear-viajes.page.html',

@@ -13,23 +13,23 @@ const routes: Routes = [
   },
   {
     path: 'login',
-    loadChildren: () => import('./login/login.module').then( m => m.LoginPageModule)
+    loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
   },
   {
     path: 'register',
-    loadChildren: () => import('./register/register.module').then( m => m.RegisterPageModule)
+    loadChildren: () => import('./pages/register/register.module').then( m => m.RegisterPageModule)
   },
   {
     path: 'crear-viajes',
-    loadChildren: () => import('./crear-viajes/crear-viajes.module').then( m => m.CrearViajesPageModule)
+    loadChildren: () => import('./pages/crear-viajes/crear-viajes.module').then( m => m.CrearViajesPageModule)
   },
   {
     path: 'solicitar-viaje',
-    loadChildren: () => import('./solicitar-viaje/solicitar-viaje.module').then( m => m.SolicitarViajePageModule)
+    loadChildren: () => import('./pages/solicitar-viaje/solicitar-viaje.module').then( m => m.SolicitarViajePageModule)
   },
   {
     path: 'historial',
-    loadChildren: () => import('./historial/historial.module').then( m => m.HistorialPageModule)
+    loadChildren: () => import('./pages/historial/historial.module').then( m => m.HistorialPageModule)
   },
 ];
 

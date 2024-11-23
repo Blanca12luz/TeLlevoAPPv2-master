@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NavController } from '@ionic/angular';
-import { Storage } from '@ionic/storage-angular';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 
 @Component({
   selector: 'app-register',
@@ -13,7 +13,7 @@ export class RegisterPage {
 
   constructor(
     private fb: FormBuilder,
-    private storage: Storage,
+    private firestore: AngularFirestore, // Servicio Firestore
     private navCtrl: NavController
   ) {
     this.registerForm = this.fb.group({
@@ -21,24 +21,23 @@ export class RegisterPage {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
-
-    this.initStorage();
-  }
-
-  async initStorage() {
-    await this.storage.create();
   }
 
   async onRegister() {
     if (this.registerForm.valid) {
       const { name, email, password } = this.registerForm.value;
 
-      // Guardar datos del usuario en Ionic Storage
-      const user = { name, email, password };
-      await this.storage.set(email, user);
+      try {
+        // Guardar datos del usuario en Firestore
+        const user = { name, email, password };
+        await this.firestore.collection('users').doc(email).set(user);
 
-      alert('¡Registro exitoso!');
-      this.navCtrl.navigateBack('/login'); // Redirigir a la página de login
+        alert('¡Registro exitoso!');
+        this.navCtrl.navigateBack('/login'); // Redirigir a la página de login
+      } catch (error) {
+        console.error('Error al guardar en Firebase:', error);
+        alert('Hubo un error al registrar. Por favor, intenta nuevamente.');
+      }
     } else {
       alert('Por favor, completa todos los campos correctamente.');
     }

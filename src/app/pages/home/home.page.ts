@@ -1,5 +1,6 @@
+import { Itemlist, ItemListConductor } from '../../interfaces/itemlist';
 import { Component } from '@angular/core';
-import { Itemlist, ItemListConductor } from '../interfaces/itemlist';
+
 import { Router } from '@angular/router';
 
 @Component({

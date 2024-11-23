@@ -10,8 +10,6 @@ export class CrearViajesPage implements OnInit {
   public fecha: any;
   public espacioDisponible: number = 1;
   public precio: number | null = null;
-  public puntoInicio: Location | undefined;
-  public puntoDestino: Location | undefined;
 viajeForm: any;
 
   constructor(private storage: Storage, private viajeService: ViajeService) {}
@@ -22,13 +20,7 @@ viajeForm: any;
 
     // Obtener los puntos de inicio y destino guardados
     const viaje = await this.viajeService.obtenerViaje();
-    if (viaje) {
-      this.puntoInicio = viaje.puntoInicio;
-      this.puntoDestino = viaje.puntoDestino;
-      console.log('Puntos cargados:', this.puntoInicio, this.puntoDestino);
-    } else {
-      console.log('No se encontraron puntos de inicio o destino');
-    }
+
   }
 
   async viajecreado(viajeForm: any) {

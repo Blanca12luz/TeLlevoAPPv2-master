@@ -1,4 +1,4 @@
-import { Itemlist, ItemListConductor } from '../../interfaces/itemlist';
+import { Itemlistcliente, ItemListConductor } from '../../interfaces/itemlist';
 import { Component } from '@angular/core';
 
 import { Router } from '@angular/router';
@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 })
 export class HomePage {
 
-  vinculos: Itemlist[] = [{
+  vinculos: Itemlistcliente[] = [{
     ruta: '/solicitar-viaje',
     titulo: 'Solicitar viaje',
     icono: 'add'

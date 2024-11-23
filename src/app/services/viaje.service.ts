@@ -19,16 +19,7 @@ export class ViajeService {
   }
 
   // Guarda el viaje en Ionic Storage
-  async guardarViaje(puntoInicio: Location, puntoDestino: Location) {
-    if (!this.storageInitialized) return;
-    const viaje = {
-      puntoInicio,
-      puntoDestino,
-      fecha: new Date().toISOString(),
-    };
-    await this.storage.set('viaje', viaje);
-    console.log('Viaje guardado en Ionic Storage:', viaje);
-  }
+
 
   // Obtiene el viaje almacenado
   async obtenerViaje() {

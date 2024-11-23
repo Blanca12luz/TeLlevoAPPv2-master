@@ -1,30 +1,50 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <ion-back-button text="Volver" mode="ios" defaultHref="/home"></ion-back-button>
-    </ion-buttons>
+    <ion-title>Crear Viaje</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <form (ngSubmit)="viajecreado(viajeForm)">
+<ion-content class="ion-padding">
+  <form (ngSubmit)="viajecreado(viajeForm)" #viajeForm="ngForm">
+    <!-- Nombre del viaje -->
     <ion-item>
-      <ion-label position="floating">Nombre</ion-label>
+      <ion-label position="floating">Nombre del viaje</ion-label>
       <ion-input [(ngModel)]="nombre" name="nombre" required></ion-input>
     </ion-item>
 
+    <!-- Botón para seleccionar la fecha -->
     <ion-item>
-      <ion-label position="floating">Fecha</ion-label>
-      <ion-datetime 
-        [(ngModel)]="fecha" 
-        name="fecha" 
-        displayFormat="MMM DD, YYYY" 
-        pickerFormat="MMM DD, YYYY" 
-        required>
-      </ion-datetime>
+      <ion-label>Fecha del viaje</ion-label>
+      <ion-datetime-button datetime="datetime"></ion-datetime-button>
     </ion-item>
 
-    <!-- Campo de precio -->
+    <!-- ion-datetime (asegúrate de que el ID coincida con el botón) -->
+    <ion-item>
+        <ion-datetime
+          id="datetime"
+          presentation="date"
+          locale="es-ES"
+          first-day-of-week="1"
+          [(ngModel)]="fecha"
+          name="fecha"
+          cancel-text="Cancelar"
+          done-text="Seleccionar">
+        </ion-datetime>
+    </ion-item>
+    
+
+    <!-- Espacios disponibles -->
+    <ion-item>
+      <ion-label position="floating">Espacios disponibles</ion-label>
+      <ion-input 
+        type="number" 
+        [(ngModel)]="espacioDisponible" 
+        name="espacioDisponible" 
+        required>
+      </ion-input>
+    </ion-item>
+
+    <!-- Precio -->
     <ion-item>
       <ion-label position="floating">Precio</ion-label>
       <ion-input 
@@ -35,6 +55,9 @@
       </ion-input>
     </ion-item>
 
-    <ion-button expand="block" type="submit">Guardar Viaje</ion-button>
+    <!-- Botón para crear el viaje -->
+    <ion-button expand="block" type="submit" [disabled]="viajeForm.invalid">
+      Crear Viaje
+    </ion-button>
   </form>
 </ion-content>

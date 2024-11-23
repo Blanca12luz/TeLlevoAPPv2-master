@@ -1,4 +1,4 @@
-export interface Itemlist {
+export interface Itemlistcliente {
     ruta:string,
     titulo:string,
     icono:string,

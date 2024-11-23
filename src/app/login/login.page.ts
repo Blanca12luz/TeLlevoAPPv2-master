@@ -1,7 +1,13 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Storage } from '@ionic/storage-angular';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { NavController } from '@ionic/angular';
+
+interface User {
+  name: string;
+  email: string;
+  password: string;
+}
 
 @Component({
   selector: 'app-login',
@@ -13,33 +19,40 @@ export class LoginPage {
 
   constructor(
     private fb: FormBuilder,
-    private storage: Storage,
+    private firestore: AngularFirestore, // Servicio Firestore
     private navCtrl: NavController
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
-    this.initStorage();
-  }
-
-  async initStorage() {
-    await this.storage.create();
   }
 
   async onLogin() {
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
 
-      // Intentar recuperar el usuario desde Ionic Storage
-      const storedUser = await this.storage.get(email);
+      try {
+        // Buscar el usuario en Firestore
+        const userDoc = await this.firestore.collection('users').doc(email).get().toPromise();
 
-      if (storedUser && storedUser.password === password) {
-        // Si el usuario existe y la contraseña coincide
-        alert('Inicio de sesión exitoso');
-        this.navCtrl.navigateForward('/home'); // Redirigir a la página principal
-      } else {
-        alert('Correo o contraseña incorrectos');
+        if (userDoc && userDoc.exists) {
+          // Usar un cast explícito para tratar los datos como de tipo 'User'
+          const userData = userDoc.data() as User;
+
+          // Verificar si la contraseña coincide
+          if (userData.password === password) {
+            alert('Inicio de sesión exitoso');
+            this.navCtrl.navigateForward('/home'); // Redirigir a la página principal
+          } else {
+            alert('Contraseña incorrecta');
+          }
+        } else {
+          alert('No se encontró un usuario con ese correo');
+        }
+      } catch (error) {
+        console.error('Error al iniciar sesión:', error);
+        alert('Hubo un error al iniciar sesión. Intenta nuevamente.');
       }
     } else {
       alert('Por favor completa todos los campos correctamente');

@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button text="Volver" mode="ios" defaultHref="/home"></ion-back-button>
     </ion-buttons>
-    <ion-title >Crear Viaje</ion-title>
+    <ion-title>Crear Viaje</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -21,20 +21,17 @@
       <ion-datetime-button datetime="datetime"></ion-datetime-button>
     </ion-item>
 
-    <!-- ion-datetime (asegúrate de que el ID coincida con el botón) -->
-    <ion-item>
-        <ion-datetime
-          id="datetime"
-          presentation="date"
-          locale="es-ES"
-          first-day-of-week="1"
-          [(ngModel)]="fecha"
-          name="fecha"
-          cancel-text="Cancelar"
-          done-text="Seleccionar">
-        </ion-datetime>
-    </ion-item>
-    
+    <!-- ion-datetime -->
+    <ion-datetime
+      id="datetime"
+      presentation="date"
+      locale="es-ES"
+      first-day-of-week="1"
+      [(ngModel)]="fecha"
+      name="fecha"
+      cancel-text="Cancelar"
+      done-text="Seleccionar">
+    </ion-datetime>
 
     <!-- Espacios disponibles -->
     <ion-item>
@@ -57,6 +54,14 @@
         required>
       </ion-input>
     </ion-item>
+
+    <!-- Botón para redirigir al lugar -->
+    <div class="recorrido-container">
+      <ion-label>¿Cuál es tu Recorrido?</ion-label>
+      <ion-button href="/lugar" expand="block" color="secondary">
+        Seleccionar Recorrido
+      </ion-button>
+    </div>
 
     <!-- Botón para crear el viaje -->
     <ion-button expand="block" type="submit" [disabled]="viajeForm.invalid">

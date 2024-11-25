@@ -1,4 +1,22 @@
 ion-datetime {
-    --color: var(--ion-color-primary); /* Color del texto */
-    --background: var(--ion-color-light); /* Fondo */
+    --color: var(--ion-color-primary);
+    /* Color del texto */
+    --background: var(--ion-color-light);
+    /* Fondo */
+}
+
+.recorrido-container {
+    margin-top: 16px;
+    text-align: center;
+
+    ion-label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 16px;
+        color: var(--ion-color-medium);
+    }
+
+    ion-button {
+        width: 100%;
+    }
 }

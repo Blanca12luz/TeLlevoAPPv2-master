@@ -54,4 +54,6 @@ export class CrearViajesPage implements OnInit {
       precio: this.precio,
     });
   }
+
+  // link para ir a la pagina lugar
 }

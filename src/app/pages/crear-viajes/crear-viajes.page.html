@@ -39,7 +39,7 @@
       <ion-input 
         type="number" 
         [(ngModel)]="espacioDisponible" 
-        name="espacioDisponible" 
+        name ="espacioDisponible" 
         required>
       </ion-input>
     </ion-item>
@@ -55,13 +55,9 @@
       </ion-input>
     </ion-item>
 
-    <!-- Botón para redirigir al lugar -->
-    <div class="recorrido-container">
-      <ion-label>¿Cuál es tu Recorrido?</ion-label>
-      <ion-button href="/lugar" expand="block" color="secondary">
-        Seleccionar Recorrido
-      </ion-button>
-    </div>
+    <!-- Mapa de Mapbox -->
+    <app-map-component></app-map-component>
+
 
     <!-- Botón para crear el viaje -->
     <ion-button expand="block" type="submit" [disabled]="viajeForm.invalid">

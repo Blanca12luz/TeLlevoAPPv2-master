@@ -53,19 +53,23 @@
         name="precio" 
         required>
       </ion-input>
+          <!-- Campo de búsqueda para destino -->
+    <ion-item>
+      <ion-label position="floating">Buscar destino</ion-label>
+      <ion-input id="search-input" placeholder="Escribe tu destino..." (ionInput)="onSearchInput($event)"></ion-input>
     </ion-item>
-
-    <!-- Botón para redirigir al lugar -->
-    <div class="recorrido-container">
-      <ion-label>¿Cuál es tu Recorrido?</ion-label>
-      <ion-button href="/lugar" expand="block" color="secondary">
-        Seleccionar Recorrido
-      </ion-button>
+    
+    </ion-item>
+    
+    <div class="map-container">
+      <div id="map" style="width: 100%; height: 400px;"></div>
     </div>
 
     <!-- Botón para crear el viaje -->
     <ion-button expand="block" type="submit" [disabled]="viajeForm.invalid">
       Crear Viaje
     </ion-button>
+
+    
   </form>
 </ion-content>

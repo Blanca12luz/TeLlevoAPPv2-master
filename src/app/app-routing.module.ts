@@ -30,9 +30,6 @@ const routes: Routes = [
   {
     path: 'historial',
     loadChildren: () => import('./pages/historial/historial.module').then( m => m.HistorialPageModule)
-  },  {
-    path: 'lugar',
-    loadChildren: () => import('./pages/lugar/lugar.module').then( m => m.LugarPageModule)
   },
 
 ];

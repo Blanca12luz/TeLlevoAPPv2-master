@@ -15,13 +15,11 @@
       <ion-input [(ngModel)]="nombre" name="nombre" required></ion-input>
     </ion-item>
 
-    <!-- Botón para seleccionar la fecha -->
+    <!-- Fecha del viaje -->
     <ion-item>
       <ion-label>Fecha del viaje</ion-label>
       <ion-datetime-button datetime="datetime"></ion-datetime-button>
     </ion-item>
-
-    <!-- ion-datetime -->
     <ion-datetime
       id="datetime"
       presentation="date"
@@ -36,26 +34,23 @@
     <!-- Espacios disponibles -->
     <ion-item>
       <ion-label position="floating">Espacios disponibles</ion-label>
-      <ion-input 
-        type="number" 
-        [(ngModel)]="espacioDisponible" 
-        name="espacioDisponible" 
-        required>
-      </ion-input>
+      <ion-input type="number" [(ngModel)]="espacioDisponible" name="espacioDisponible" required></ion-input>
     </ion-item>
 
     <!-- Precio -->
     <ion-item>
       <ion-label position="floating">Precio</ion-label>
-      <ion-input 
-        type="number" 
-        [(ngModel)]="precio" 
-        name="precio" 
-        required>
-      </ion-input>
+      <ion-input type="number" [(ngModel)]="precio" name="precio" required></ion-input>
     </ion-item>
 
-    <div #map class="map" style="width: 100%; height: 300px;"></div>
+    <!-- Buscador -->
+    <ion-item>
+      <ion-label position="stacked">Buscar ubicación</ion-label>
+      <ion-input [(ngModel)]="searchQuery" (ionInput)="searchLocation()" placeholder="Ingresa una ubicación"></ion-input>
+    </ion-item>
+
+    <!-- Mapbox -->
+    <div id="map" style="width: 100%; height: 300px; margin-top: 10px;"></div>
 
     <!-- Botón para crear el viaje -->
     <ion-button expand="block" type="submit" [disabled]="viajeForm.invalid">

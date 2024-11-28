@@ -31,7 +31,8 @@
                 "output": "./svg"
               }
             ],
-            "styles": ["src/global.scss", "src/theme/variables.scss"],
+            "styles": ["src/global.scss", "src/theme/variables.scss" ,"src/theme/global.scss",
+            "node_modules/mapbox-gl/dist/mapbox-gl.css"],
             "scripts": []
           },
           "configurations": {
@@ -80,7 +81,7 @@
               "buildTarget": "app:build:development"
             },
             "ci": {
-              "progress": false
+              
             }
           },
           "defaultConfiguration": "development"
@@ -111,7 +112,9 @@
                 "output": "./svg"
               }
             ],
-            "styles": ["src/global.scss", "src/theme/variables.scss"],
+            "styles": ["src/global.scss", 
+            "src/theme/variables.scss","src/theme/global.scss",
+            "node_modules/mapbox-gl/dist/mapbox-gl.css"],
             "scripts": []
           },
           "configurations": {

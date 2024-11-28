@@ -30,9 +30,12 @@
     "@capacitor/status-bar": "6.0.2",
     "@ionic/angular": "^8.0.0",
     "@ionic/storage-angular": "^4.0.0",
+    "@types/mapbox-gl": "^3.4.1",
     "firebase": "^11.0.2",
     "ionicons": "^7.0.0",
+    "mapbox-gl": "^3.8.0",
     "rxjs": "~7.8.0",
+    "sass": "^1.81.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.2"
   },

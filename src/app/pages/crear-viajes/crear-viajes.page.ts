@@ -77,4 +77,34 @@ export class CrearViajesPage implements OnInit, AfterViewInit {
       precio: this.precio,
     });
   }
+
+  usarGPS() {
+    if (!navigator.geolocation) {
+      console.error('La geolocalización no está soportada por este navegador.');
+      return;
+    }
+  
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+  
+        // Centrar el mapa en la ubicación actual
+        this.map.flyTo({ center: [longitude, latitude], zoom: 14 });
+  
+        // Mover el marcador a la ubicación actual
+        this.marker.setLngLat([longitude, latitude]);
+  
+        console.log('Ubicación actual:', { latitude, longitude });
+      },
+      (error) => {
+        console.error('Error al obtener la ubicación:', error);
+      },
+      {
+        enableHighAccuracy: true,
+      }
+    );
+  }
+  
+
+
 }

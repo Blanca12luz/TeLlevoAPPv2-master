@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import * as mapboxgl from 'mapbox-gl';
 import { environment } from 'src/environments/environment'; // Ruta según tu configuración
-
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-crear-viajes',

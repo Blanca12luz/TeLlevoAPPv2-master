@@ -1,7 +1,6 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import * as mapboxgl from 'mapbox-gl';
 import { environment } from 'src/environments/environment'; // Ruta según tu configuración
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-crear-viajes',
@@ -9,13 +8,15 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./crear-viajes.page.scss'],
 })
 export class CrearViajesPage implements OnInit, AfterViewInit {
-  public nombre: string = ''; 
-  public fecha: string = ''; 
-  public espacioDisponible: number = 1; 
-  public precio: number | null = null; 
+  public nombre: string = '';
+  public fecha: string = '';
+  public espacioDisponible: number = 1;
+  public precio: number | null = null;
   public searchQuery: string = ''; // Para el campo de búsqueda
-  public map!: mapboxgl.Map; 
-  public marker!: mapboxgl.Marker; 
+
+  public map!: mapboxgl.Map;
+  public marker!: mapboxgl.Marker;
+  public currentLocation: [number, number] | null = null; // Coordenadas actuales [lng, lat]
 
   constructor() {}
 
@@ -24,30 +25,53 @@ export class CrearViajesPage implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-        // Configurar el token de acceso para Mapbox
-
-
+    // Configurar el token de acceso para Mapbox
+    (mapboxgl as any).default.accessToken = environment.mapboxAccessToken;
 
     // Inicializar el mapa
-    (mapboxgl as any).default.accessToken = environment.mapboxAccessToken;
     this.map = new mapboxgl.Map({
-      container: 'map', 
+      container: 'map',
       style: 'mapbox://styles/mapbox/streets-v11',
-      center: [-74.006, 40.7128], // Coordenadas iniciales (Nueva York)
-      zoom: 12, 
-      accessToken: environment.mapboxAccessToken, // Token definido aquí
+      center: [-74.006, 40.7128], // Coordenadas iniciales (por ejemplo, Nueva York)
+      zoom: 12,
     });
 
-    // Añadir un marcador en el centro inicial
+    // Añadir un marcador inicial
     this.marker = new mapboxgl.Marker().setLngLat([-74.006, 40.7128]).addTo(this.map);
+  }
+
+  usarGPS() {
+    if (!navigator.geolocation) {
+      alert('Geolocalización no soportada en tu navegador.');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+
+        // Guardar ubicación actual
+        this.currentLocation = [longitude, latitude];
+
+        // Centrar el mapa y mover el marcador a la ubicación actual
+        this.map.flyTo({ center: this.currentLocation, zoom: 14 });
+        this.marker.setLngLat(this.currentLocation);
+
+        console.log('Ubicación actual:', this.currentLocation);
+      },
+      (error) => {
+        console.error('Error obteniendo ubicación:', error);
+        alert('No se pudo obtener la ubicación.');
+      }
+    );
   }
 
   searchLocation() {
     if (!this.searchQuery.trim()) return;
 
-    const geocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(this.searchQuery)}.json?access_token=${(mapboxgl as any).default.accessToken}`;
-
-
+    const geocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+      this.searchQuery
+    )}.json?access_token=${(mapboxgl as any).default.accessToken}`;
 
     fetch(geocodingUrl)
       .then((response) => response.json())
@@ -58,10 +82,69 @@ export class CrearViajesPage implements OnInit, AfterViewInit {
           // Actualizar el mapa y el marcador
           this.map.flyTo({ center: [lng, lat], zoom: 14 });
           this.marker.setLngLat([lng, lat]);
+
+          console.log('Destino encontrado:', [lng, lat]);
+        } else {
+          alert('No se encontraron resultados para esa ubicación.');
         }
       })
       .catch((error) => {
         console.error('Error al buscar ubicación:', error);
+      });
+  }
+
+  trazarRuta() {
+    if (!this.currentLocation) {
+      alert('Por favor, activa el GPS primero.');
+      return;
+    }
+
+    const destino = this.marker.getLngLat(); // Obtener las coordenadas del marcador de destino
+
+    const directionsUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${this.currentLocation[0]},${this.currentLocation[1]};${destino.lng},${destino.lat}?geometries=geojson&access_token=${(mapboxgl as any).default.accessToken}`;
+
+    fetch(directionsUrl)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.routes && data.routes.length > 0) {
+          const route = data.routes[0].geometry;
+
+          // Dibujar la ruta en el mapa
+          if (this.map.getSource('route')) {
+            this.map.removeLayer('route');
+            this.map.removeSource('route');
+          }
+
+          this.map.addSource('route', {
+            type: 'geojson',
+            data: {
+              type: 'Feature',
+              properties: {},
+              geometry: route,
+            },
+          });
+
+          this.map.addLayer({
+            id: 'route',
+            type: 'line',
+            source: 'route',
+            layout: {
+              'line-cap': 'round',
+              'line-join': 'round',
+            },
+            paint: {
+              'line-color': '#1db7dd',
+              'line-width': 5,
+            },
+          });
+
+          console.log('Ruta trazada con éxito.');
+        } else {
+          alert('No se pudo calcular la ruta.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error al trazar la ruta:', error);
       });
   }
 
@@ -70,41 +153,13 @@ export class CrearViajesPage implements OnInit, AfterViewInit {
       console.log('El formulario contiene errores.');
       return;
     }
+
     console.log('Viaje creado:', {
       nombre: this.nombre,
       fecha: this.fecha,
       espacioDisponible: this.espacioDisponible,
       precio: this.precio,
+      destino: this.marker.getLngLat(),
     });
   }
-
-  usarGPS() {
-    if (!navigator.geolocation) {
-      console.error('La geolocalización no está soportada por este navegador.');
-      return;
-    }
-  
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-  
-        // Centrar el mapa en la ubicación actual
-        this.map.flyTo({ center: [longitude, latitude], zoom: 14 });
-  
-        // Mover el marcador a la ubicación actual
-        this.marker.setLngLat([longitude, latitude]);
-  
-        console.log('Ubicación actual:', { latitude, longitude });
-      },
-      (error) => {
-        console.error('Error al obtener la ubicación:', error);
-      },
-      {
-        enableHighAccuracy: true,
-      }
-    );
-  }
-  
-
-
 }

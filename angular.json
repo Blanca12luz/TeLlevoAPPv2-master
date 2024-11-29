@@ -31,7 +31,7 @@
                 "output": "./svg"
               }
             ],
-            "styles": ["src/global.scss", "src/theme/variables.scss" ,"src/theme/global.scss",
+            "styles": ["src/global.scss", "src/theme/variables.scss" ,
             "node_modules/mapbox-gl/dist/mapbox-gl.css"],
             "scripts": []
           },
@@ -113,7 +113,7 @@
               }
             ],
             "styles": ["src/global.scss", 
-            "src/theme/variables.scss","src/theme/global.scss",
+            "src/theme/variables.scss",
             "node_modules/mapbox-gl/dist/mapbox-gl.css"],
             "scripts": []
           },

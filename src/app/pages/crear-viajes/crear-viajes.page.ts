@@ -1,6 +1,8 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import * as mapboxgl from 'mapbox-gl';
 import { environment } from 'src/environments/environment'; // Ruta según tu configuración
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+
 
 @Component({
   selector: 'app-crear-viajes',
@@ -18,7 +20,7 @@ export class CrearViajesPage implements OnInit, AfterViewInit {
   public marker!: mapboxgl.Marker;
   public currentLocation: [number, number] | null = null; // Coordenadas actuales [lng, lat]
 
-  constructor() {}
+  constructor(private firestore: AngularFirestore) {}
 
   async ngOnInit() {
     this.fecha = new Date().toISOString();
@@ -153,13 +155,29 @@ export class CrearViajesPage implements OnInit, AfterViewInit {
       console.log('El formulario contiene errores.');
       return;
     }
-
-    console.log('Viaje creado:', {
+  
+    const destino = this.marker.getLngLat(); // Obtener las coordenadas del marcador de destino
+  
+    const viaje = {
       nombre: this.nombre,
       fecha: this.fecha,
       espacioDisponible: this.espacioDisponible,
       precio: this.precio,
-      destino: this.marker.getLngLat(),
-    });
+      destino: {
+        lng: destino.lng, // Convertir a objeto plano
+        lat: destino.lat,
+      },
+    };
+  
+    try {
+      await this.firestore.collection('viajes').add(viaje);
+      console.log('Viaje guardado en Firebase:', viaje);
+      alert('Viaje creado con éxito y guardado en Firebase.');
+    } catch (error) {
+      console.error('Error al guardar el viaje:', error);
+      alert('Hubo un error al guardar el viaje.');
+    }
   }
+  
+
 }

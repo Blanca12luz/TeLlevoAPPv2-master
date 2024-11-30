@@ -32,4 +32,28 @@ export class SolicitarViajePage implements OnInit {
         }
       );
   }
+
+  /**
+   * Método para manejar la selección de un viaje
+   * @param viaje El viaje seleccionado
+   */
+  seleccionarViaje(viaje: any) {
+    console.log('Viaje seleccionado:', viaje);
+    const notificacion = {
+      mensaje: `El usuario ha solicitado el viaje a ${viaje.destino.lat}, ${viaje.destino.lng}`,
+      fecha: new Date(),
+      conductorId: viaje.conductorId, // Asume que cada viaje tiene un ID de conductor
+    };
+
+    // Agrega la notificación a Firestore
+    this.firestore
+      .collection('notificaciones')
+      .add(notificacion)
+      .then(() => {
+        console.log('Notificación enviada correctamente.');
+      })
+      .catch((error) => {
+        console.error('Error al enviar la notificación:', error);
+      });
+  }
 }

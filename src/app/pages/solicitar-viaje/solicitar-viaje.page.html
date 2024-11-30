@@ -23,6 +23,9 @@
           <p>Precio: ${{ viaje.precio }}</p>
           <p>Destino: {{ viaje.destino.lat }}, {{ viaje.destino.lng }}</p>
         </ion-label>
+        <ion-button slot="end" (click)="seleccionarViaje(viaje)" color="secondary">
+          Seleccionar
+        </ion-button>
       </ion-item>
     </ion-list>
   
@@ -30,5 +33,4 @@
       <ion-text>No hay viajes disponibles.</ion-text>
     </ion-footer>
   </ion-content>
-  
 </ion-content>

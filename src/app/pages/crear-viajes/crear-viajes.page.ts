@@ -150,35 +150,39 @@ export class CrearViajesPage implements OnInit, AfterViewInit {
       });
   }
 
-  async viajecreado(viajeForm: any) {
-    if (viajeForm.invalid) {
-      console.log('El formulario contiene errores.');
-      return;
-    }
-  
-    const destino = this.marker.getLngLat(); // Obtener las coordenadas del marcador de destino
-  
-    const viaje = {
-      nombre: this.nombre,
-      fecha: this.fecha,
-      espacioDisponible: this.espacioDisponible,
-      precio: this.precio,
-      destino: {
-        lng: destino.lng, // Convertir a objeto plano
-        lat: destino.lat,
-      },
-    };
-  
-    try {
-      // Usar la patente como ID único del documento en Firebase
-      await this.firestore.collection('viajes').doc(this.patente).set(viaje);
-      console.log('Viaje guardado en Firebase:', viaje);
-      alert('Viaje creado con éxito y guardado en Firebase.');
-    } catch (error) {
-      console.error('Error al guardar el viaje:', error);
-      alert('Hubo un error al guardar el viaje.');
-    }
+async viajecreado(viajeForm: any) {
+  if (viajeForm.invalid) {
+    console.log('El formulario contiene errores.');
+    return;
   }
+
+  const destino = this.marker.getLngLat();
+
+  // Obtener el UID del creador (asume que el usuario está autenticado)
+  const creadorId = 'user123'; // Reemplazar por el UID del usuario autenticado
+
+  const viaje = {
+    nombre: this.nombre,
+    fecha: this.fecha,
+    espacioDisponible: this.espacioDisponible,
+    precio: this.precio,
+    destino: {
+      lng: destino.lng,
+      lat: destino.lat,
+    },
+    creadorId, // Incluir el UID del creador
+  };
+
+  try {
+    await this.firestore.collection('viajes').doc(this.patente).set(viaje);
+    console.log('Viaje guardado en Firebase:', viaje);
+    alert('Viaje creado con éxito y guardado en Firebase.');
+  } catch (error) {
+    console.error('Error al guardar el viaje:', error);
+    alert('Hubo un error al guardar el viaje.');
+  }
+}
+
   
 
 }

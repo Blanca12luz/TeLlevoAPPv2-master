@@ -27,11 +27,6 @@ export class HomePage {
     tituloconductor: 'Historial Conductor',
     iconoconductor: 'person'
   },
-  {
-    rutaconductor: '/notificaciones',
-    tituloconductor: 'Notificaciones', // Nuevo título
-    iconoconductor: 'notifications', // Nuevo ícono
-  },
   ];
 
   constructor(private router: Router) { }

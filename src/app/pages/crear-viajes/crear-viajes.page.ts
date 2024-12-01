@@ -15,7 +15,7 @@ export class CrearViajesPage implements OnInit, AfterViewInit {
   public espacioDisponible: number = 1;
   public precio: number | null = null;
   public searchQuery: string = ''; // Para el campo de búsqueda
-
+  public patente: string = ''; // Nueva propiedad para la patente
   public map!: mapboxgl.Map;
   public marker!: mapboxgl.Marker;
   public currentLocation: [number, number] | null = null; // Coordenadas actuales [lng, lat]
@@ -170,7 +170,8 @@ export class CrearViajesPage implements OnInit, AfterViewInit {
     };
   
     try {
-      await this.firestore.collection('viajes').add(viaje);
+      // Usar la patente como ID único del documento en Firebase
+      await this.firestore.collection('viajes').doc(this.patente).set(viaje);
       console.log('Viaje guardado en Firebase:', viaje);
       alert('Viaje creado con éxito y guardado en Firebase.');
     } catch (error) {

@@ -15,21 +15,19 @@
       <ion-input [(ngModel)]="nombre" name="nombre" required></ion-input>
     </ion-item>
 
+    <!-- Patente -->
+    <ion-item>
+      <ion-label position="floating">Patente</ion-label>
+      <ion-input [(ngModel)]="patente" name="patente" required></ion-input>
+    </ion-item>
+
     <!-- Fecha del viaje -->
     <ion-item>
       <ion-label>Fecha del viaje</ion-label>
       <ion-datetime-button datetime="datetime"></ion-datetime-button>
     </ion-item>
-    <ion-datetime
-      id="datetime"
-      presentation="date"
-      locale="es-ES"
-      first-day-of-week="1"
-      [(ngModel)]="fecha"
-      name="fecha"
-      [ngModelOptions]="{ standalone: true }"
-      cancel-text="Cancelar"
-      done-text="Seleccionar">
+    <ion-datetime id="datetime" presentation="date" locale="es-ES" first-day-of-week="1" [(ngModel)]="fecha"
+      name="fecha" [ngModelOptions]="{ standalone: true }" cancel-text="Cancelar" done-text="Seleccionar">
     </ion-datetime>
 
     <!-- Espacios disponibles -->
@@ -47,10 +45,7 @@
     <!-- Buscador -->
     <ion-item>
       <ion-label position="stacked">Elegir Destino</ion-label>
-      <ion-input
-        [(ngModel)]="searchQuery"
-        name="searchQuery"
-        (ionInput)="searchLocation()"
+      <ion-input [(ngModel)]="searchQuery" name="searchQuery" (ionInput)="searchLocation()"
         placeholder="Ingresa una ubicación"></ion-input>
     </ion-item>
 

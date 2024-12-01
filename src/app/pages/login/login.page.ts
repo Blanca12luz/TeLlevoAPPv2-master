@@ -1,13 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { NavController } from '@ionic/angular';
-
-interface User {
-  name: string;
-  email: string;
-  password: string;
-}
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 @Component({
   selector: 'app-login',
@@ -19,7 +13,7 @@ export class LoginPage {
 
   constructor(
     private fb: FormBuilder,
-    private firestore: AngularFirestore, // Servicio Firestore
+    private auth: AngularFireAuth,
     private navCtrl: NavController
   ) {
     this.loginForm = this.fb.group({
@@ -33,29 +27,25 @@ export class LoginPage {
       const { email, password } = this.loginForm.value;
 
       try {
-        // Buscar el usuario en Firestore
-        const userDoc = await this.firestore.collection('users').doc(email).get().toPromise();
-
-        if (userDoc && userDoc.exists) {
-          // Usar un cast explícito para tratar los datos como de tipo 'User'
-          const userData = userDoc.data() as User;
-
-          // Verificar si la contraseña coincide
-          if (userData.password === password) {
-            alert('Inicio de sesión exitoso');
-            this.navCtrl.navigateForward('/home'); // Redirigir a la página principal
-          } else {
-            alert('Contraseña incorrecta');
-          }
-        } else {
-          alert('No se encontró un usuario con ese correo');
+        await this.auth.signInWithEmailAndPassword(email, password);
+        // Redirige al usuario a la página "home"
+        this.navCtrl.navigateForward('/home');
+      } catch (error: any) {
+        switch (error.code) {
+          case 'auth/user-not-found':
+            alert('No existe un usuario con ese correo.');
+            break;
+          case 'auth/wrong-password':
+            alert('Contraseña incorrecta.');
+            break;
+          case 'auth/invalid-email':
+            alert('El formato del correo es inválido.');
+            break;
+          default:
+            alert('Ocurrió un error. Intenta nuevamente.');
+            console.error(error);
         }
-      } catch (error) {
-        console.error('Error al iniciar sesión:', error);
-        alert('Hubo un error al iniciar sesión. Intenta nuevamente.');
       }
-    } else {
-      alert('Por favor completa todos los campos correctamente');
     }
   }
 }

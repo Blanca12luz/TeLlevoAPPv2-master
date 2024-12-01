@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NavController } from '@ionic/angular';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 
 @Component({
@@ -13,7 +14,8 @@ export class RegisterPage {
 
   constructor(
     private fb: FormBuilder,
-    private firestore: AngularFirestore, // Servicio Firestore
+    private auth: AngularFireAuth,
+    private firestore: AngularFirestore,
     private navCtrl: NavController
   ) {
     this.registerForm = this.fb.group({
@@ -28,14 +30,19 @@ export class RegisterPage {
       const { name, email, password } = this.registerForm.value;
 
       try {
-        // Guardar datos del usuario en Firestore
-        const user = { name, email, password };
-        await this.firestore.collection('users').doc(email).set(user);
+        // Registrar el usuario en Firebase Authentication
+        const userCredential = await this.auth.createUserWithEmailAndPassword(email, password);
+
+        // Guardar información adicional del usuario en Firestore
+        await this.firestore.collection('users').doc(userCredential.user?.uid).set({
+          name,
+          email,
+        });
 
         alert('¡Registro exitoso!');
-        this.navCtrl.navigateBack('/login'); // Redirigir a la página de login
+        this.navCtrl.navigateBack('/login');
       } catch (error) {
-        console.error('Error al guardar en Firebase:', error);
+        console.error('Error al registrar:', error);
         alert('Hubo un error al registrar. Por favor, intenta nuevamente.');
       }
     } else {

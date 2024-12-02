@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Cambiar Contraseña</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form (submit)="resetPassword()">
+    <ion-item>
+      <ion-label position="floating">Nueva Contraseña</ion-label>
+      <ion-input
+        type="password"
+        [(ngModel)]="newPassword"
+        name="password"
+        required
+      ></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Código (opcional)</ion-label>
+      <ion-input
+        type="text"
+        [(ngModel)]="oobCode"
+        name="oobCode"
+      ></ion-input>
+    </ion-item>
+    <ion-button expand="block" type="submit">Actualizar Contraseña</ion-button>
+  </form>
+</ion-content>

@@ -42,11 +42,15 @@ export class RegisterPage {
         alert('¡Registro exitoso!');
         this.navCtrl.navigateBack('/login');
       } catch (error) {
+        if (error.code === 'auth/email-already-in-use') {
+          alert('El correo electrónico ya está en uso.');
+        } else if (error.code === 'auth/weak-password') {
+          alert('La contraseña es demasiado débil.');
+        } else {
+          alert('Hubo un error al registrar. Por favor, intenta nuevamente.');
+        }
         console.error('Error al registrar:', error);
-        alert('Hubo un error al registrar. Por favor, intenta nuevamente.');
-      }
-    } else {
-      alert('Por favor, completa todos los campos correctamente.');
     }
+  }
   }
 }

@@ -52,6 +52,7 @@ export class SolicitarViajePage implements OnInit {
       .add(notificacion)
       .then(() => {
         console.log('Notificación enviada correctamente.');
+        alert('Notificación enviada correctamente.');
       })
       .catch((error) => {
         console.error('Error al enviar la notificación:', error);

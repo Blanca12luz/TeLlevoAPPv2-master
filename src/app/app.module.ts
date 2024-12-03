@@ -10,18 +10,20 @@ import { IonicStorageModule } from '@ionic/storage-angular';
 
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
-import { environment } from 'src/environments/environment';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
+import { environment } from '../environments/environment';
+
 @NgModule({
   declarations: [AppComponent],
-
-  imports: [BrowserModule, IonicModule.forRoot(), 
+  imports: [
+    BrowserModule,
+    IonicModule.forRoot(),
     AppRoutingModule,
-    IonicStorageModule.forRoot(),      // Inicializa el servicio de Storage
-    AngularFireModule.initializeApp(environment.firebase),
+    IonicStorageModule.forRoot(),
+    AngularFireModule.initializeApp(environment['firebase']),
     AngularFirestoreModule,
-    AngularFireAuthModule,],
-
+    AngularFireAuthModule,
+  ],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],
 })

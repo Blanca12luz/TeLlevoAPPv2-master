@@ -5,6 +5,8 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true, // También es recomendable incluir esto para compatibilidad
     "baseUrl": "./",
+    "paths": {
+      "src/environments/*": ["src/environments/*"]},
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
     "strict": false,

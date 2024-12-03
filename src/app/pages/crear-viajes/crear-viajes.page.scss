@@ -20,3 +20,12 @@ ion-datetime {
         width: 100%;
     }
 }
+
+#map {
+    width: 100%;
+    height: 300px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    max-width: 100%;
+    /* Para evitar overflow en pantallas pequeñas */
+}

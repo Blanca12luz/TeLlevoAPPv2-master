@@ -32,14 +32,7 @@ const routes: Routes = [
     path: 'historial',
     loadChildren: () => import('./pages/historial/historial.module').then( m => m.HistorialPageModule)
   },
-  {
-    path: 'newpasword',
-    loadChildren:() => import('./pages/newpassword/newpasword-routing.module').then(m => m.NewpaswordPageRoutingModule)
-  },
-  {
-    path: 'reset-password',
-    loadChildren: () => import('./pages/reset-password/reset-password.module').then( m => m.ResetPasswordPageModule)
-  },
+
 
 
 

@@ -43,7 +43,7 @@ export class LoginPage {
             break;
           default:
             alert('Ocurrió un error. Intenta nuevamente.');
-            console.error(error);
+            console.log(error);
         }
       }
     }

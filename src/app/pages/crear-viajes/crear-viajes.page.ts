@@ -4,6 +4,7 @@ import { environment } from 'src/environments/environment'; // Ruta según tu co
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 
 
+
 @Component({
   selector: 'app-crear-viajes',
   templateUrl: './crear-viajes.page.html',
@@ -102,7 +103,7 @@ export class CrearViajesPage implements OnInit, AfterViewInit {
     }
 
     const destino = this.marker.getLngLat(); // Obtener las coordenadas del marcador de destino
-
+    console.log (this.marker) 
     const directionsUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${this.currentLocation[0]},${this.currentLocation[1]};${destino.lng},${destino.lat}?geometries=geojson&access_token=${(mapboxgl as any).default.accessToken}`;
 
     fetch(directionsUrl)
@@ -167,14 +168,17 @@ async viajecreado(viajeForm: any) {
     espacioDisponible: this.espacioDisponible,
     precio: this.precio,
     destino: {
+      nombre: this.searchQuery,
       lng: destino.lng,
       lat: destino.lat,
     },
     creadorId, // Incluir el UID del creador
+    patente: this.patente
   };
 
   try {
-    await this.firestore.collection('viajes').doc(this.patente).set(viaje);
+    /*await this.firestore.collection('viajes').doc(this.patente).set(viaje);*/ 
+    await this.firestore.collection('viajes').add(viaje);
     console.log('Viaje guardado en Firebase:', viaje);
     alert('Viaje creado con éxito y guardado en Firebase.');
   } catch (error) {
@@ -183,6 +187,5 @@ async viajecreado(viajeForm: any) {
   }
 }
 
-  
 
 }

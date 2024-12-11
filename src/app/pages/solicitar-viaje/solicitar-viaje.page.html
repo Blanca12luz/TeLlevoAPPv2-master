@@ -21,7 +21,7 @@
           <p>Fecha: {{ viaje.fecha }}</p>
           <p>Espacios Disponibles: {{ viaje.espacioDisponible }}</p>
           <p>Precio: ${{ viaje.precio }}</p>
-          <p>Destino: {{ viaje.destino.lat }}, {{ viaje.destino.lng }}</p>
+          <p>Destino: {{ viaje.destino.nombre }}</p>
         </ion-label>
         <ion-button slot="end" (click)="seleccionarViaje(viaje)" color="secondary">
           Seleccionar

@@ -1,0 +1,38 @@
+<!-- profile.page.html -->
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Perfil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  @if (loading) {
+    <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center">
+      <ion-spinner></ion-spinner>
+      <h1 style="margin-top: 10px">Cargando Perfil...</h1>
+    </div>
+  } @else {
+    <div class="profile-container">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Información del Perfil</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-item>
+            <ion-label position="stacked">Nombre</ion-label>
+            <ion-text>{{ profile.nombre }}</ion-text>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">Correo Electrónico</ion-label>
+            <ion-text>{{ profile.email }}</ion-text>
+          </ion-item>
+        </ion-card-content>
+      </ion-card>
+      @if (!profile.conductor){
+        <ion-button expand="block" color="primary" (click)="convertirEnConductor()">
+          Convertirse en Conductor
+        </ion-button>  
+      }
+    </div>
+  }
+</ion-content>

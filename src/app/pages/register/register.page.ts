@@ -37,6 +37,7 @@ export class RegisterPage {
         await this.firestore.collection('users').doc(userCredential.user?.uid).set({
           name,
           email,
+          conductor:false
         });
 
         alert('¡Registro exitoso!');

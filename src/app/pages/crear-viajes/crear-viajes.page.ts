@@ -2,6 +2,8 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import * as mapboxgl from 'mapbox-gl';
 import { environment } from 'src/environments/environment'; // Ruta según tu configuración
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AuthServiceService } from 'src/app/services/auth-service.service';
+
 
 
 @Component({
@@ -15,15 +17,20 @@ export class CrearViajesPage implements OnInit, AfterViewInit {
   public espacioDisponible: number = 1;
   public precio: number | null = null;
   public searchQuery: string = ''; // Para el campo de búsqueda
-  public patente: string = ''; // Nueva propiedad para la patente
   public map!: mapboxgl.Map;
   public marker!: mapboxgl.Marker;
   public currentLocation: [number, number] | null = null; // Coordenadas actuales [lng, lat]
+  loading: boolean = true;
+  user: any;
 
-  constructor(private firestore: AngularFirestore) {}
+  constructor(private firestore: AngularFirestore, private _auth: AuthServiceService) {}
 
   async ngOnInit() {
+    this.loading = true;
     this.fecha = new Date().toISOString();
+    this.user = await this._auth.getUser();
+    console.log('User:', this.user);
+    this.loading = false;
   }
 
   ngAfterViewInit() {
@@ -102,7 +109,7 @@ export class CrearViajesPage implements OnInit, AfterViewInit {
     }
 
     const destino = this.marker.getLngLat(); // Obtener las coordenadas del marcador de destino
-
+    console.log (this.marker) 
     const directionsUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${this.currentLocation[0]},${this.currentLocation[1]};${destino.lng},${destino.lat}?geometries=geojson&access_token=${(mapboxgl as any).default.accessToken}`;
 
     fetch(directionsUrl)
@@ -156,25 +163,34 @@ async viajecreado(viajeForm: any) {
     return;
   }
 
+  if (this.espacioDisponible < 1) {
+    alert('El espacio disponible debe ser al menos 1.');
+    return;
+  }
+  if (this.precio === null || this.precio < 250) {
+    alert('El precio debe ser al menos de $250.');
+    return;
+  }
+
   const destino = this.marker.getLngLat();
-
-  // Obtener el UID del creador (asume que el usuario está autenticado)
-  const creadorId = 'user123'; // Reemplazar por el UID del usuario autenticado
-
   const viaje = {
     nombre: this.nombre,
     fecha: this.fecha,
     espacioDisponible: this.espacioDisponible,
     precio: this.precio,
     destino: {
+      nombre: this.searchQuery,
       lng: destino.lng,
       lat: destino.lat,
     },
-    creadorId, // Incluir el UID del creador
+    usuario: this.user.uid,
+    patente: this.user.patente,
+    vehiculo: this.user.vehiculo,
   };
 
   try {
-    await this.firestore.collection('viajes').doc(this.patente).set(viaje);
+    /*await this.firestore.collection('viajes').doc(this.patente).set(viaje);*/ 
+    await this.firestore.collection('viajes').add(viaje);
     console.log('Viaje guardado en Firebase:', viaje);
     alert('Viaje creado con éxito y guardado en Firebase.');
   } catch (error) {
@@ -183,6 +199,5 @@ async viajecreado(viajeForm: any) {
   }
 }
 
-  
 
 }

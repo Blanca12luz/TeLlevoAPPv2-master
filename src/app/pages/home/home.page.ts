@@ -2,6 +2,7 @@ import { Itemlistcliente, ItemListConductor } from '../../interfaces/itemlist';
 import { Component } from '@angular/core';
 
 import { Router } from '@angular/router';
+import { AuthServiceService } from 'src/app/services/auth-service.service';
 
 @Component({
   selector: 'app-home',
@@ -9,6 +10,9 @@ import { Router } from '@angular/router';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
+
+  user: any;
+  loading: boolean = true;
 
   vinculos: Itemlistcliente[] = [{
     ruta: '/solicitar-viaje',
@@ -29,18 +33,16 @@ export class HomePage {
   },
   ];
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private auth: AuthServiceService) { }
 
-  ngOnInit() {
-
+  async ngOnInit() {
+    this.loading = true;
+    this.user = await this.auth.getUser();
+    this.loading = false;
   }
 
-
-  logout() {
-    this.router.navigate(['']);
-  }
-
-  onConductor() {
-    this.router.navigate(['/conductor'])
+  async logout() {
+    await this.auth.logout();
+    this.router.navigate(['login']);
   }
 }

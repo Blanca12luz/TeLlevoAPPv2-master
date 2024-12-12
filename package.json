@@ -41,6 +41,7 @@
     "nodemailer": "^6.9.16",
     "rxjs": "~7.8.0",
     "sass": "^1.81.0",
+    "TeLlevoAPPv2-master": "file:",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.2"
   },

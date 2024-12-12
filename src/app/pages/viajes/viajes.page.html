@@ -1,9 +1,9 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-buttons slot="start">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start" >
       <ion-back-button text="Volver" mode="ios" defaultHref="/home"></ion-back-button>
     </ion-buttons>
-    <ion-title>viajes</ion-title>
+    <ion-title >viajes</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -26,7 +26,7 @@
         <p>Precio: ${{ viaje.precio }}</p>
         <p>Destino: {{ viaje.destino.nombre }}</p>
       </ion-label>
-      <ion-button slot="end"  (click)="borrarviaje(viajes)" color="danger">
+      <ion-button slot="end"  (click)="borrarViaje(viajes)" color="danger">
         Borrar
       </ion-button>
     </ion-item>

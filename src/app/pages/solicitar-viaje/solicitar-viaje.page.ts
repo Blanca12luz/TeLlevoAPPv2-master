@@ -39,14 +39,14 @@ export class SolicitarViajePage implements OnInit {
    */
   seleccionarViaje(viaje: any) {
     console.log('Viaje seleccionado:', viaje);
-  
+
     const notificacion = {
       mensaje: `El usuario ha solicitado el viaje a ${viaje.destino.lat}, ${viaje.destino.lng}`,
       fecha: new Date(),
       receptorId: viaje.creadorId, // Enviar la notificación al creador
       solicitanteId: 'user456', // Reemplazar con el UID del usuario solicitante
     };
-  
+
     this.firestore
       .collection('notificaciones')
       .add(notificacion)
@@ -58,5 +58,4 @@ export class SolicitarViajePage implements OnInit {
         console.error('Error al enviar la notificación:', error);
       });
   }
-  
 }

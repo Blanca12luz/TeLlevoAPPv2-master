@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFirestore,  } from '@angular/fire/compat/firestore';
+import { initializeApp } from 'firebase/app';
+import { getFirestore, doc, deleteDoc, collection, getDocs } from 'firebase/firestore';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-viajes',
@@ -7,9 +9,10 @@ import { AngularFirestore,  } from '@angular/fire/compat/firestore';
   styleUrls: ['./viajes.page.scss'],
 })
 export class ViajesPage implements OnInit {
-  public viajes: any[] = []; // Lista de viajes obtenidos desde Firebase
+  public viajes: any[] = [];
+  private db = getFirestore(initializeApp(environment.firebase)); // Inicializar Firestore
 
-  constructor(private firestore: AngularFirestore) {}
+  constructor() {}
 
   ngOnInit() {
     this.obtenerViajes();
@@ -18,27 +21,33 @@ export class ViajesPage implements OnInit {
   /**
    * Método para obtener los viajes desde Firebase
    */
-  obtenerViajes() {
-    this.firestore
-      .collection('viajes') // Nombre de la colección en Firebase
-      .valueChanges({ idField: 'id' }) // Recuperar datos con ID
-      .subscribe(
-        (data: any[]) => {
-          this.viajes = data;
-          console.log('Viajes obtenidos:', this.viajes);
-        },
-        (error) => {
-          console.error('Error al obtener viajes:', error);
-        }
-      );
+  async obtenerViajes() {
+    try {
+      const viajesRef = collection(this.db, 'viajes');
+      const snapshot = await getDocs(viajesRef);
+      this.viajes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      console.log('Viajes obtenidos:', this.viajes);
+    } catch (error) {
+      console.error('Error al obtener viajes:', error);
+    }
   }
 
-  async borrarviaje(viaje: any){
-    await deleteDoc(this.viajes,viaje);
-    console.log("Viaje eliminado");
+  /**
+   * Método para eliminar un viaje usando deleteDoc
+   * @param viaje El viaje a eliminar
+   */
+  async borrarViaje(viaje: any) {
+    if (viaje.id) {
+      try {
+        await deleteDoc(doc(this.db, 'viajes', viaje.id)); // Eliminar el documento
+        console.log(`Viaje con ID ${viaje.id} eliminado.`);
+        // Actualizar la lista local de viajes
+        this.viajes = this.viajes.filter(v => v.id !== viaje.id);
+      } catch (error) {
+        console.error('Error al eliminar el viaje:', error);
+      }
+    } else {
+      console.error('El viaje no tiene un ID válido.');
+    }
   }
 }
-function deleteDoc(viajes: any[], viaje: any) {
-  throw new Error('Function not implemented.');
-}
-

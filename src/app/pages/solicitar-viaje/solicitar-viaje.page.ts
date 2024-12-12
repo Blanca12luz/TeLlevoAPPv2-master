@@ -15,9 +15,6 @@ export class SolicitarViajePage implements OnInit {
     this.obtenerViajes();
   }
 
-  /**
-   * Método para obtener los viajes desde Firebase
-   */
   obtenerViajes() {
     this.firestore
       .collection('viajes') // Nombre de la colección en Firebase
@@ -33,29 +30,19 @@ export class SolicitarViajePage implements OnInit {
       );
   }
 
-  /**
-   * Método para manejar la selección de un viaje
-   * @param viaje El viaje seleccionado
-   */
   seleccionarViaje(viaje: any) {
     console.log('Viaje seleccionado:', viaje);
 
-    const notificacion = {
-      mensaje: `El usuario ha solicitado el viaje a ${viaje.destino.lat}, ${viaje.destino.lng}`,
-      fecha: new Date(),
-      receptorId: viaje.creadorId, // Enviar la notificación al creador
-      solicitanteId: 'user456', // Reemplazar con el UID del usuario solicitante
-    };
-
+    // Guardar el viaje seleccionado en la colección "rutas"
     this.firestore
-      .collection('notificaciones')
-      .add(notificacion)
+      .collection('rutas')
+      .add(viaje)
       .then(() => {
-        console.log('Notificación enviada correctamente.');
-        alert('Notificación enviada correctamente.');
+        console.log('Viaje agregado a las rutas.');
+        alert('Viaje agregado exitosamente.');
       })
       .catch((error) => {
-        console.error('Error al enviar la notificación:', error);
+        console.error('Error al agregar el viaje:', error);
       });
   }
 }

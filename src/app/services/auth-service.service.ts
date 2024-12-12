@@ -17,7 +17,9 @@ export class AuthServiceService {
   }
 
   async updateUser(user: any) {
-    return await this.firestore.collection('users').doc(user.uid).update(user);
+    console.log('User:', user);
+    // return await this.firestore.collection('users').doc(user.uid).update(user);
+    return await this.firestore.collection('users').doc(user.uid).set(user, { merge: true });
   }
 
   logout() {

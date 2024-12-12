@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import * as mapboxgl from 'mapbox-gl';
 import { environment } from 'src/environments/environment'; // Ruta según tu configuración
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AuthServiceService } from 'src/app/services/auth-service.service';
 
 
 
@@ -16,15 +17,20 @@ export class CrearViajesPage implements OnInit, AfterViewInit {
   public espacioDisponible: number = 1;
   public precio: number | null = null;
   public searchQuery: string = ''; // Para el campo de búsqueda
-  public patente: string = ''; // Nueva propiedad para la patente
   public map!: mapboxgl.Map;
   public marker!: mapboxgl.Marker;
   public currentLocation: [number, number] | null = null; // Coordenadas actuales [lng, lat]
+  loading: boolean = true;
+  user: any;
 
-  constructor(private firestore: AngularFirestore) {}
+  constructor(private firestore: AngularFirestore, private _auth: AuthServiceService) {}
 
   async ngOnInit() {
+    this.loading = true;
     this.fecha = new Date().toISOString();
+    this.user = await this._auth.getUser();
+    console.log('User:', this.user);
+    this.loading = false;
   }
 
   ngAfterViewInit() {
@@ -157,11 +163,16 @@ async viajecreado(viajeForm: any) {
     return;
   }
 
+  if (this.espacioDisponible < 1) {
+    alert('El espacio disponible debe ser al menos 1.');
+    return;
+  }
+  if (this.precio === null || this.precio < 250) {
+    alert('El precio debe ser al menos de $250.');
+    return;
+  }
+
   const destino = this.marker.getLngLat();
-
-  // Obtener el UID del creador (asume que el usuario está autenticado)
-  const creadorId = 'user123'; // Reemplazar por el UID del usuario autenticado
-
   const viaje = {
     nombre: this.nombre,
     fecha: this.fecha,
@@ -172,8 +183,9 @@ async viajecreado(viajeForm: any) {
       lng: destino.lng,
       lat: destino.lat,
     },
-    creadorId, // Incluir el UID del creador
-    patente: this.patente
+    usuario: this.user.uid,
+    patente: this.user.patente,
+    vehiculo: this.user.vehiculo,
   };
 
   try {

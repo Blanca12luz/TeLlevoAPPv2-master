@@ -12,9 +12,12 @@ export class AuthServiceService {
     const _user = await firstValueFrom (this.auth.authState);
     const __user = await firstValueFrom (this.firestore.collection('users').doc(_user?.uid).get());
     const ___user: any = __user.data();
-    const  user = { uid: _user?.uid, email: ___user.email, name: ___user.name, conductor: ___user.conductor || false };
+    const  user = { uid: _user?.uid, email: ___user.email, name: ___user.name, conductor: ___user.conductor || false, vehiculo: ___user.vehiculo, patente: ___user.patente };
+
     return user; // Devuelve el usuario autenticado
   }
+
+
 
   async updateUser(user: any) {
     console.log('User:', user);

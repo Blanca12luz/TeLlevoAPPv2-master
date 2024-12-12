@@ -19,12 +19,22 @@ export class HomePage {
     titulo: 'Solicitar viaje',
     icono: 'add'
   },
+  {
+    ruta: '/rutas',
+    titulo: 'Rutas',
+    icono: 'calendar'
+  },
   ];
 
   vinculoConductor: ItemListConductor[] = [{
     rutaconductor: '/crear-viajes',
     tituloconductor: 'Crear viaje',
     iconoconductor: 'car'
+  },
+  {
+    rutaconductor: '/viajes',
+    tituloconductor: 'Viajes',
+    iconoconductor: 'globe'
   },
   {
     rutaconductor: '/historial',

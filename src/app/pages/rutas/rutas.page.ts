@@ -32,6 +32,8 @@ export class RutasPage implements OnInit {
 
   cancelarViaje(ruta: any) {
     if (confirm(`¿Estás seguro de cancelar el viaje a ${ruta.destino.lat}, ${ruta.destino.lng}?`)) {
+
+      
       this.firestore
         .collection('rutas')
         .doc(ruta.id)

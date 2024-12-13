@@ -2,30 +2,64 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { firstValueFrom } from 'rxjs';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { Storage } from '@ionic/storage-angular';
+
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthServiceService {
+  private USER_KEY = 'auth-user'; // Clave para el almacenamiento local
 
-  constructor(private auth: AngularFireAuth, private firestore: AngularFirestore) { }
+  constructor(
+    private auth: AngularFireAuth,
+    private firestore: AngularFirestore,
+    private storage: Storage
+  ) {
+    this.storage.create(); // Inicializa Ionic Storage
+  }
+
   async getUser() {
-    const _user = await firstValueFrom (this.auth.authState);
-    const __user = await firstValueFrom (this.firestore.collection('users').doc(_user?.uid).get());
+    // Intenta recuperar el usuario de Firebase
+    const _user = await firstValueFrom(this.auth.authState);
+
+    if (!_user) {
+      // Si no hay usuario autenticado, verifica si hay un usuario almacenado localmente
+      const localUser = await this.storage.get(this.USER_KEY);
+      return localUser ? JSON.parse(localUser) : null;
+    }
+
+    // Recupera los datos adicionales del usuario en Firestore
+    const __user = await firstValueFrom(this.firestore.collection('users').doc(_user.uid).get());
     const ___user: any = __user.data();
-    const  user = { uid: _user?.uid, email: ___user.email, name: ___user.name, conductor: ___user.conductor || false, vehiculo: ___user.vehiculo, patente: ___user.patente };
+    const user = {
+      uid: _user.uid,
+      email: ___user.email,
+      name: ___user.name,
+      conductor: ___user.conductor || false,
+      vehiculo: ___user.vehiculo,
+      patente: ___user.patente,
+    };
+
+    // Guarda el usuario en el almacenamiento local de Ionic
+    await this.storage.set(this.USER_KEY, JSON.stringify(user));
 
     return user; // Devuelve el usuario autenticado
   }
 
-
-
   async updateUser(user: any) {
     console.log('User:', user);
-    // return await this.firestore.collection('users').doc(user.uid).update(user);
     return await this.firestore.collection('users').doc(user.uid).set(user, { merge: true });
   }
 
-  logout() {
+  async logout() {
+    // Limpia el almacenamiento local y cierra sesión en Firebase
+    await this.storage.remove(this.USER_KEY);
     return this.auth.signOut();
+  }
+
+  async isLoggedIn(): Promise<boolean> {
+    // Verifica si hay un usuario almacenado localmente en Ionic Storage
+    const user = await this.storage.get(this.USER_KEY);
+    return !!user;
   }
 }

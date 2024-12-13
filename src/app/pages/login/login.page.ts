@@ -12,6 +12,8 @@ import { Storage } from '@ionic/storage-angular';
 })
 export class LoginPage {
   loginForm: FormGroup;
+  passwordVisible: boolean = false; // Estado para controlar la visibilidad de la contraseña
+  passwordFieldType: string = 'password'; // Tipo de campo de la contraseña
 
   constructor(
     private fb: FormBuilder,
@@ -53,7 +55,6 @@ export class LoginPage {
           await this.storage.set('user', {
             uid: userCredential.user?.uid,
             email,
-            
           });
 
           // Redirigir al usuario a la página principal
@@ -79,5 +80,11 @@ export class LoginPage {
         }
       }
     }
+  }
+
+  // Función para alternar la visibilidad de la contraseña
+  togglePasswordVisibility() {
+    this.passwordVisible = !this.passwordVisible;
+    this.passwordFieldType = this.passwordVisible ? 'text' : 'password';
   }
 }

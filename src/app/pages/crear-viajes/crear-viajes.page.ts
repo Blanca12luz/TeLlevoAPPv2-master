@@ -3,6 +3,7 @@ import * as mapboxgl from 'mapbox-gl';
 import { environment } from 'src/environments/environment'; // Ruta según tu configuración
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AuthServiceService } from 'src/app/services/auth-service.service';
+import { NgForm } from '@angular/forms';
 
 
 
@@ -24,6 +25,13 @@ export class CrearViajesPage implements OnInit, AfterViewInit {
   user: any;
 
   constructor(private firestore: AngularFirestore, private _auth: AuthServiceService) {}
+
+  ngOnDestroy() {
+    if (this.map) {
+      this.map.remove();
+    }
+  }
+  
 
   async ngOnInit() {
     this.loading = true;
@@ -156,7 +164,8 @@ export class CrearViajesPage implements OnInit, AfterViewInit {
         console.error('Error al trazar la ruta:', error);
       });
   }
-  async viajecreado(viajeForm: any) {
+  
+  async viajecreado(viajeForm: NgForm) {
     if (viajeForm.invalid) {
       console.log('El formulario contiene errores.');
       return;
@@ -193,3 +202,4 @@ export class CrearViajesPage implements OnInit, AfterViewInit {
 
 
 }
+  

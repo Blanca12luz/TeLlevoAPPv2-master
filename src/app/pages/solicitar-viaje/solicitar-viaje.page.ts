@@ -31,14 +31,14 @@ export class SolicitarViajePage implements OnInit {
   }
 
   seleccionarViaje(viaje: any) {
-    if (viaje.espaciosDisponibles > 0) {
-      const nuevoEspacio = viaje.espaciosDisponibles - 1;
+    if (viaje.espacioDisponible > 0) {
+      const nuevoEspacio = viaje.espacioDisponible - 1;
 
       // Actualizar el espacio disponible del viaje seleccionado
       this.firestore
         .collection('viajes')
         .doc(viaje.id)
-        .update({ espaciosDisponibles: nuevoEspacio })
+        .update({ espacioDisponible: nuevoEspacio })
         .then(() => {
           console.log('Espacios disponibles actualizados.');
 

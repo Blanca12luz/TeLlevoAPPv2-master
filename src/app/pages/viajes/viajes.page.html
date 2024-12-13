@@ -14,4 +14,18 @@
     </ion-toolbar>
   </ion-header>
 
+  <ion-item *ngFor="let viaje of viajes">
+    <ion-label>
+      <h2>{{ viaje.nombre }}</h2>
+      <p>Fecha: {{ viaje.fecha }}</p>
+      <p>Espacios Disponibles: {{ viaje.espacioDisponible }}</p>
+      <p>Precio: ${{ viaje.precio }}</p>
+      <p>Destino: {{ viaje.destino.nombre }}</p>
+    </ion-label>
+    <ion-button slot="end"  (click)="BorrarViaje(viaje)"  color="danger">
+      borrar
+    </ion-button>
+  </ion-item>
+
+  
 </ion-content>

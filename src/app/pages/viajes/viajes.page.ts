@@ -32,16 +32,20 @@ export class ViajesPage implements OnInit {
         }
       );
   }
+  BorrarViaje(viajes: any) {
+    if (confirm(`¿Estás seguro de cancelar el viaje a ${viajes.id}`)) {
+      this.firestore
+        .collection('viajes')
+        .doc(viajes.id)
+        .delete()
+        .then(() => {
+          console.log('Viaje eliminado.');
+          alert('Viaje eliminado exitosamente.');
+        })
+        .catch((error) => {
+          console.error('Error al eliminar el viaje:', error);
+        });
+    }
+  }
 
-  /**
-   * Método para eliminar un viaje
-/**
- * Método para eliminar un viaje con confirmación
-/**
- * Método para eliminar un viaje con confirmación
- * @param viaje El objeto del viaje a eliminar
- */
-borrarViaje(viaje: any) {
-
-}
 }

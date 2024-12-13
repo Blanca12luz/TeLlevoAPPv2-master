@@ -156,48 +156,40 @@ export class CrearViajesPage implements OnInit, AfterViewInit {
         console.error('Error al trazar la ruta:', error);
       });
   }
-
-async viajecreado(viajeForm: any) {
-  if (viajeForm.invalid) {
-    console.log('El formulario contiene errores.');
-    return;
+  async viajecreado(viajeForm: any) {
+    if (viajeForm.invalid) {
+      console.log('El formulario contiene errores.');
+      return;
+    }
+  
+    const destino = this.marker.getLngLat();
+    const viaje = {
+      nombre: this.nombre,
+      fecha: this.fecha,
+      espacioDisponible: this.espacioDisponible,
+      precio: this.precio,
+      destino: {
+        nombre: this.searchQuery,
+        lng: destino.lng,
+        lat: destino.lat,
+      },
+      usuario: this.user.uid,
+      patente: this.user.patente,
+      vehiculo: this.user.vehiculo,
+    };
+  
+    try {
+      const docRef = await this.firestore.collection('viajes').add(viaje); // Genera automáticamente un ID
+      await this.firestore.collection('viajes').doc(docRef.id).update({ id: docRef.id }); // Guarda el ID en el documento
+      console.log('Viaje guardado en Firebase con ID:', docRef.id);
+      alert('Viaje creado con éxito y guardado en Firebase.');
+    } catch (error) {
+      console.error('Error al guardar el viaje:', error);
+      alert('Hubo un error al guardar el viaje.');
+    }
   }
-
-  if (this.espacioDisponible < 1) {
-    alert('El espacio disponible debe ser al menos 1.');
-    return;
-  }
-  if (this.precio === null || this.precio < 250) {
-    alert('El precio debe ser al menos de $250.');
-    return;
-  }
-
-  const destino = this.marker.getLngLat();
-  const viaje = {
-    nombre: this.nombre,
-    fecha: this.fecha,
-    espacioDisponible: this.espacioDisponible,
-    precio: this.precio,
-    destino: {
-      nombre: this.searchQuery,
-      lng: destino.lng,
-      lat: destino.lat,
-    },
-    usuario: this.user.uid,
-    patente: this.user.patente,
-    vehiculo: this.user.vehiculo,
-  };
-
-  try {
-    /*await this.firestore.collection('viajes').doc(this.patente).set(viaje);*/ 
-    await this.firestore.collection('viajes').add(viaje);
-    console.log('Viaje guardado en Firebase:', viaje);
-    alert('Viaje creado con éxito y guardado en Firebase.');
-  } catch (error) {
-    console.error('Error al guardar el viaje:', error);
-    alert('Hubo un error al guardar el viaje.');
-  }
-}
+  
+  
 
 
 }

@@ -31,17 +31,43 @@ export class RutasPage implements OnInit {
   }
 
   cancelarViaje(ruta: any) {
-    if (confirm(`¿Estás seguro de cancelar el viaje a ${ruta.destino.lat}, ${ruta.destino.lng}?`)) {
+    if (confirm(`¿Estás seguro de cancelar el viaje a ${ruta.destino}?`)) {
+      const viajeId = ruta.id;
+
+      // Recuperar el viaje original desde la colección "viajes"
       this.firestore
-        .collection('rutas')
-        .doc(ruta.id)
-        .delete()
-        .then(() => {
-          console.log('Viaje cancelado.');
-          alert('Viaje cancelado exitosamente.');
-        })
-        .catch((error) => {
-          console.error('Error al cancelar el viaje:', error);
+        .collection('viajes')
+        .doc(viajeId)
+        .get()
+        .subscribe((doc: any) => {
+          if (doc.exists) {
+            const nuevoEspacio = (doc.data().espaciosDisponibles || 0) + 1;
+
+            // Actualizar el espacio disponible en la colección "viajes"
+            this.firestore
+              .collection('viajes')
+              .doc(viajeId)
+              .update({ espaciosDisponibles: nuevoEspacio })
+              .then(() => {
+                console.log('Espacios disponibles restaurados.');
+
+                // Eliminar el viaje de la colección "rutas"
+                this.firestore
+                  .collection('rutas')
+                  .doc(ruta.id)
+                  .delete()
+                  .then(() => {
+                    console.log('Viaje cancelado.');
+                    alert('Viaje cancelado exitosamente.');
+                  })
+                  .catch((error) => {
+                    console.error('Error al eliminar el viaje de rutas:', error);
+                  });
+              })
+              .catch((error) => {
+                console.error('Error al restaurar los espacios disponibles:', error);
+              });
+          }
         });
     }
   }

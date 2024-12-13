@@ -31,18 +31,34 @@ export class SolicitarViajePage implements OnInit {
   }
 
   seleccionarViaje(viaje: any) {
-    console.log('Viaje seleccionado:', viaje);
+    if (viaje.espaciosDisponibles > 0) {
+      const nuevoEspacio = viaje.espaciosDisponibles - 1;
 
-    // Guardar el viaje seleccionado en la colección "rutas"
-    this.firestore
-      .collection('rutas')
-      .add(viaje)
-      .then(() => {
-        console.log('Viaje agregado a las rutas.');
-        alert('Viaje agregado exitosamente.');
-      })
-      .catch((error) => {
-        console.error('Error al agregar el viaje:', error);
-      });
+      // Actualizar el espacio disponible del viaje seleccionado
+      this.firestore
+        .collection('viajes')
+        .doc(viaje.id)
+        .update({ espaciosDisponibles: nuevoEspacio })
+        .then(() => {
+          console.log('Espacios disponibles actualizados.');
+
+          // Guardar el viaje seleccionado en la colección "rutas"
+          this.firestore
+            .collection('rutas')
+            .add(viaje)
+            .then(() => {
+              console.log('Viaje agregado a las rutas.');
+              alert('Viaje agregado exitosamente.');
+            })
+            .catch((error) => {
+              console.error('Error al agregar el viaje:', error);
+            });
+        })
+        .catch((error) => {
+          console.error('Error al actualizar los espacios disponibles:', error);
+        });
+    } else {
+      alert('No hay espacios disponibles para este viaje.');
+    }
   }
 }

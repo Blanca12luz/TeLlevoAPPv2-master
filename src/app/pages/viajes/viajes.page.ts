@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, deleteDoc, collection, getDocs } from 'firebase/firestore';
-import { environment } from 'src/environments/environment';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 
 @Component({
   selector: 'app-viajes',
@@ -9,45 +7,41 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./viajes.page.scss'],
 })
 export class ViajesPage implements OnInit {
-  public viajes: any[] = [];
-  private db = getFirestore(initializeApp(environment.firebase)); // Inicializar Firestore
+  public viajes: any[] = []; // Lista de viajes obtenidos desde Firebase
 
-  constructor() {}
+  constructor(private firestore: AngularFirestore) {}
 
   ngOnInit() {
-    this.obtenerViajes();
+    this.obtenerViajes(); // Llamamos al método para obtener los viajes al iniciar el componente
   }
 
   /**
    * Método para obtener los viajes desde Firebase
    */
-  async obtenerViajes() {
-    try {
-      const viajesRef = collection(this.db, 'viajes');
-      const snapshot = await getDocs(viajesRef);
-      this.viajes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      console.log('Viajes obtenidos:', this.viajes);
-    } catch (error) {
-      console.error('Error al obtener viajes:', error);
-    }
+  obtenerViajes() {
+    this.firestore
+      .collection('viajes') // Nombre de la colección en Firebase
+      .valueChanges({ idField: 'id' }) // Recuperar datos con ID agregado como campo
+      .subscribe(
+        (data: any[]) => {
+          this.viajes = data; // Asignamos los datos obtenidos a la lista de viajes
+          console.log('Viajes obtenidos:', this.viajes); // Mostramos los datos obtenidos en consola
+        },
+        (error) => {
+          console.error('Error al obtener viajes:', error); // Capturamos cualquier error al obtener los viajes
+        }
+      );
   }
 
   /**
-   * Método para eliminar un viaje usando deleteDoc
-   * @param viaje El viaje a eliminar
-   */
-  async borrarViaje(viaje: any) {
-    if (viaje.id) {
-      try {
-        await deleteDoc(doc(this.db, 'viajes', viaje.id)); // Eliminar el documento
-        console.log(`Viaje con ID ${viaje.id} eliminado.`);
-        // Actualizar la lista local de viajes
-        this.viajes = this.viajes.filter(v => v.id !== viaje.id);
-      } catch (error) {
-        console.error('Error al eliminar el viaje:', error);
-      }
-    } else {
-      console.error('El viaje no tiene un ID válido.');
-    }
-  }
+   * Método para eliminar un viaje
+/**
+ * Método para eliminar un viaje con confirmación
+/**
+ * Método para eliminar un viaje con confirmación
+ * @param viaje El objeto del viaje a eliminar
+ */
+borrarViaje(viaje: any) {
+
+}
 }

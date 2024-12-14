@@ -32,6 +32,8 @@ export class ViajesPage implements OnInit {
         }
       );
   }
+
+  
   BorrarViaje(viajes: any) {
     if (confirm(`¿Estás seguro de cancelar el viaje a ${viajes.id}`)) {
       this.firestore

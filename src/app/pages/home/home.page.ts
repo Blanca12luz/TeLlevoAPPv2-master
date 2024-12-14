@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { AfterContentInit, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthServiceService } from 'src/app/services/auth-service.service';
 
@@ -7,7 +7,8 @@ import { AuthServiceService } from 'src/app/services/auth-service.service';
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage {
+export class HomePage implements AfterContentInit {
+
   user: any;
   loading: boolean = true;
 
@@ -21,8 +22,14 @@ export class HomePage {
     { rutaconductor: '/viajes', tituloconductor: 'Viajes', iconoconductor: 'globe' },
     { rutaconductor: '/historial', tituloconductor: 'Historial Conductor', iconoconductor: 'person' },
   ];
+  data: any;
 
   constructor(private router: Router, private auth: AuthServiceService) {}
+
+  async ngAfterContentInit() {
+    console.log("hola after")
+      
+  }
 
   async ngOnInit() {
     this.loading = true;
@@ -35,6 +42,14 @@ export class HomePage {
 
     this.user = await this.auth.getUser();
     this.loading = false;
+    this.auth._onDataChange.subscribe(async (data) => {
+      this.loading=true
+      this.user = await this.auth.getUser();
+      this.loading =false
+    } )
+  }
+  loadData() {
+    this.data = 'Datos actualizados'; // Simula cargar datos actualizados
   }
 
   async logout() {

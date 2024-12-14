@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, CUSTOM_ELEMENTS_SCHEMA, EventEmitter } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { firstValueFrom } from 'rxjs';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
@@ -9,6 +9,8 @@ import { Storage } from '@ionic/storage-angular';
 })
 export class AuthServiceService {
   private USER_KEY = 'auth-user'; // Clave para el almacenamiento local
+  _onDataChange: EventEmitter <any> = new EventEmitter()
+
 
   constructor(
     private auth: AngularFireAuth,
@@ -48,7 +50,9 @@ export class AuthServiceService {
 
   async updateUser(user: any) {
     console.log('User:', user);
-    return await this.firestore.collection('users').doc(user.uid).set(user, { merge: true });
+    const data = await this.firestore.collection('users').doc(user.uid).set(user, { merge: true });
+    this._onDataChange.emit(data)
+    return  data;
   }
 
   async logout() {
@@ -62,4 +66,6 @@ export class AuthServiceService {
     const user = await this.storage.get(this.USER_KEY);
     return !!user;
   }
+
+
 }

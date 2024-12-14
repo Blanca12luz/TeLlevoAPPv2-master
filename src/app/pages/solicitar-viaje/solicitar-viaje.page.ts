@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AuthServiceService } from 'src/app/services/auth-service.service';
 
 @Component({
   selector: 'app-solicitar-viaje',
@@ -8,11 +9,13 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 })
 export class SolicitarViajePage implements OnInit {
   public viajes: any[] = []; // Lista de viajes obtenidos desde Firebase
+  user:any;
 
-  constructor(private firestore: AngularFirestore) {}
+  constructor(private firestore: AngularFirestore, private _auth:AuthServiceService) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.obtenerViajes();
+    this.user = await this._auth.getUser()
   }
 
   obtenerViajes() {
@@ -31,6 +34,11 @@ export class SolicitarViajePage implements OnInit {
   }
 
   seleccionarViaje(viaje: any) {
+    console.log(viaje)
+    console.log(this.user)
+    
+    if (viaje.usuario == this.user.uid) return
+
     if (viaje.espacioDisponible > 0) {
       const nuevoEspacio = viaje.espacioDisponible - 1;
 

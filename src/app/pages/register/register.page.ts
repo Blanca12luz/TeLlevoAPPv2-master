@@ -1,9 +1,10 @@
-import { LocalStorageService } from './../../services/local-storage-service.service';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NavController } from '@ionic/angular';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { Storage } from '@ionic/storage-angular';  // Importamos Storage correctamente
+import { Users, Usuario } from 'src/app/interfaces/user';  // Importamos los tipos de usuario
 
 @Component({
   selector: 'app-register',
@@ -11,14 +12,16 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
   styleUrls: ['./register.page.scss'],
 })
 export class RegisterPage {
-  registerForm: FormGroup;
+  registerForm: FormGroup;  // Formulario de registro
+  // No es necesario crear una propiedad `usuario` si ya manejas los valores del formulario directamente
+  db: any;
 
   constructor(
     private fb: FormBuilder,
     private auth: AngularFireAuth,
     private firestore: AngularFirestore,
     private navCtrl: NavController,
-    private localStorage: LocalStorageService // Inyectamos el servicio de almacenamiento local
+    private storage: Storage // Inyectamos el servicio de Storage
   ) {
     // Inicializa el formulario con validaciones
     this.registerForm = this.fb.group({
@@ -26,12 +29,15 @@ export class RegisterPage {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
+
+    // Inicializa el almacenamiento
+    this.storage.create();
   }
 
   // Método para registrar un usuario
   async onRegister() {
     if (this.registerForm.valid) {
-      const { name, email, password } = this.registerForm.value;
+      const { name, email, password } = this.registerForm.value;  // Extraemos los datos del formulario
 
       try {
         // Registrar en Firebase Authentication
@@ -43,7 +49,7 @@ export class RegisterPage {
         }
 
         // Guardar información adicional en Firestore
-        const userData = {
+        const userData= {
           uid: userUid,
           name,
           email,
@@ -54,13 +60,13 @@ export class RegisterPage {
 
         await this.firestore.collection('users').doc(userUid).set(userData);
 
-        // Guardar los datos del usuario en LocalStorage usando el servicio
-        this.localStorage.guardar('user', userData);  // Guardamos el usuario en LocalStorage
+        // Guardar los datos del usuario en LocalStorage usando el servicio de Storage
+        await this.storage.set('user', userData);  // Guardamos el usuario en LocalStorage
 
         alert('¡Registro exitoso!');
 
         // Navegar a la página de inicio de sesión
-        this.navCtrl.navigateBack('/login');
+        this.navCtrl.navigateBack('/login');  // O usa navigateForward si prefieres redirigir de inmediato
       } catch (error: any) {
         // Manejo de errores de Firebase Authentication
         switch (error.code) {

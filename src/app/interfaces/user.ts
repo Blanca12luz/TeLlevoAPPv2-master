@@ -4,6 +4,6 @@ export interface Users {
 
 export interface Usuario {
     nombre: string;
-    password: number;
+    password: string;
     email: string;
 }

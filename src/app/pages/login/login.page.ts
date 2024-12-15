@@ -1,9 +1,9 @@
-import { LocalStorageService } from './../../services/local-storage-service.service';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NavController } from '@ionic/angular';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { Storage } from '@ionic/storage-angular';  // Inyectamos Storage para el almacenamiento local
 
 @Component({
   selector: 'app-login',
@@ -20,12 +20,15 @@ export class LoginPage {
     private auth: AngularFireAuth,
     private firestore: AngularFirestore, // Para obtener datos adicionales del usuario
     private navCtrl: NavController,
-    private localStorage: LocalStorageService // Inyección del servicio de almacenamiento local
+    private storage: Storage  // Inyectamos el servicio de Storage
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
+
+    // Inicializa el almacenamiento
+    this.storage.create();
   }
 
   // Método para manejar el inicio de sesión
@@ -49,8 +52,8 @@ export class LoginPage {
         if (userDoc?.exists) {
           const userData = userDoc.data();
 
-          // Guardar datos del usuario localmente usando LocalStorageService
-          await this.localStorage.guardar('user', { uid: userUid, email, userData });
+          // Guardar datos del usuario localmente usando Storage
+          await this.storage.set('user', { uid: userUid, email, userData });  // Guardamos el usuario en LocalStorage
 
           alert('¡Inicio de sesión exitoso!');
 
@@ -73,7 +76,7 @@ export class LoginPage {
             break;
           default:
             alert('Ocurrió un error. Intenta nuevamente.');
-            console.error('Error de inicio de sesión:', error);
+            console.log('Error de inicio de sesión:', error);
         }
       }
     } else {

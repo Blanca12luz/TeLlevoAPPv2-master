@@ -13,7 +13,7 @@ import { Users, Usuario } from 'src/app/interfaces/user';  // Importamos los tip
 })
 export class RegisterPage {
   registerForm: FormGroup;  // Formulario de registro
-  // No es necesario crear una propiedad `usuario` si ya manejas los valores del formulario directamente
+  
   db: any;
 
   constructor(

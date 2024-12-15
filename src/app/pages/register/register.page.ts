@@ -1,9 +1,9 @@
+import { LocalStorageService } from './../../services/local-storage-service.service';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NavController } from '@ionic/angular';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { Storage } from '@ionic/storage-angular';
 
 @Component({
   selector: 'app-register',
@@ -18,65 +18,65 @@ export class RegisterPage {
     private auth: AngularFireAuth,
     private firestore: AngularFirestore,
     private navCtrl: NavController,
-    private storage: Storage // Inyectar el servicio de Storage
+    private localStorage: LocalStorageService // Inyectamos el servicio de almacenamiento local
   ) {
+    // Inicializa el formulario con validaciones
     this.registerForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
-
-    this.initStorage(); // Inicializar el almacenamiento
   }
 
-  async initStorage() {
-    await this.storage.create();
-  }
-
+  // Método para registrar un usuario
   async onRegister() {
     if (this.registerForm.valid) {
       const { name, email, password } = this.registerForm.value;
 
       try {
-        // Registrar el usuario en Firebase Authentication
+        // Registrar en Firebase Authentication
         const userCredential = await this.auth.createUserWithEmailAndPassword(email, password);
 
-        // Guardar información adicional del usuario en Firestore
-        await this.firestore.collection('users').doc(userCredential.user?.uid).set({
+        const userUid = userCredential.user?.uid;
+        if (!userUid) {
+          throw new Error('No se pudo obtener el UID del usuario.');
+        }
+
+        // Guardar información adicional en Firestore
+        const userData = {
+          uid: userUid,
           name,
           email,
-          conductor: false,
+          conductor: false, // Valores por defecto
           vehiculo: '',
           patente: '',
-        });
+        };
 
-              // Crear objeto de usuario
-      const userData = {
-        uid: userCredential.user?.uid,
-        name,
-        email,
-      };
+        await this.firestore.collection('users').doc(userUid).set(userData);
 
-      // Guardar sesión en Ionic Storage
-      await this.storage.set('user', userData);
-
-            // Guardar sesión en localStorage
-            localStorage.setItem('auth-user', JSON.stringify(userData));
+        // Guardar los datos del usuario en LocalStorage usando el servicio
+        this.localStorage.guardar('user', userData);  // Guardamos el usuario en LocalStorage
 
         alert('¡Registro exitoso!');
 
-        // Redirigir a una página de inicio o login
+        // Navegar a la página de inicio de sesión
         this.navCtrl.navigateBack('/login');
-      } catch (error) {
-        if (error.code === 'auth/email-already-in-use') {
-          alert('El correo electrónico ya está en uso.');
-        } else if (error.code === 'auth/weak-password') {
-          alert('La contraseña es demasiado débil.');
-        } else {
-          alert('Hubo un error al registrar. Por favor, intenta nuevamente.');
+      } catch (error: any) {
+        // Manejo de errores de Firebase Authentication
+        switch (error.code) {
+          case 'auth/email-already-in-use':
+            alert('El correo electrónico ya está en uso.');
+            break;
+          case 'auth/weak-password':
+            alert('La contraseña es demasiado débil.');
+            break;
+          default:
+            alert('Hubo un error al registrar. Por favor, intenta nuevamente.');
+            console.error('Error al registrar:', error);
         }
-        console.error('Error al registrar:', error);
       }
+    } else {
+      alert('Por favor, completa todos los campos correctamente.');
     }
   }
 }

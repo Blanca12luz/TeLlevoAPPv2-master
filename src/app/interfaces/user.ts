@@ -1,5 +1,9 @@
-interface User {
-    name: string;
+export interface Users {
+    usuarios: Usuario[];
+}
+
+export interface Usuario {
+    nombre: string;
+    password: number;
     email: string;
-    password: string;
 }

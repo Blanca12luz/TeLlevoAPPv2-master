@@ -1,9 +1,9 @@
+import { LocalStorageService } from './../../services/local-storage-service.service';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NavController } from '@ionic/angular';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { Storage } from '@ionic/storage-angular';
 
 @Component({
   selector: 'app-login',
@@ -20,20 +20,15 @@ export class LoginPage {
     private auth: AngularFireAuth,
     private firestore: AngularFirestore, // Para obtener datos adicionales del usuario
     private navCtrl: NavController,
-    private storage: Storage // Inyectar Ionic Storage
+    private localStorage: LocalStorageService // Inyección del servicio de almacenamiento local
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
-
-    this.initStorage(); // Inicializar el almacenamiento
   }
 
-  async initStorage() {
-    await this.storage.create();
-  }
-
+  // Método para manejar el inicio de sesión
   async onLogin() {
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
@@ -42,32 +37,27 @@ export class LoginPage {
         // Autenticar al usuario con Firebase Authentication
         const userCredential = await this.auth.signInWithEmailAndPassword(email, password);
 
-        // Obtener datos adicionales del usuario desde Firestore
-        const userDoc = await this.firestore
-          .collection('users')
-          .doc(userCredential.user?.uid)
-          .get()
-          .toPromise();
+        // Obtener el UID del usuario
+        const userUid = userCredential.user?.uid;
+        if (!userUid) {
+          throw new Error('No se pudo obtener el UID del usuario.');
+        }
 
-          if (userDoc?.exists) {
-            const userData = {
-              uid: userCredential.user?.uid,
-              email,
-              
-            };
+        // Recuperar datos adicionales del usuario desde Firestore
+        const userDoc = await this.firestore.collection('users').doc(userUid).get().toPromise();
 
-          
-        // Guardar sesión en Ionic Storage
-        await this.storage.set('user', userData);
+        if (userDoc?.exists) {
+          const userData = userDoc.data();
 
+          // Guardar datos del usuario localmente usando LocalStorageService
+          await this.localStorage.guardar('user', { uid: userUid, email, userData });
 
-        // Guardar sesión en localStorage
-        localStorage.setItem('auth-user', JSON.stringify(userData));
+          alert('¡Inicio de sesión exitoso!');
 
-          // Redirigir al usuario a la página principal
+          // Redirigir a la página principal
           this.navCtrl.navigateForward('/home');
         } else {
-          alert('No se encontraron datos adicionales del usuario.');
+          alert('No se encontraron datos adicionales del usuario en Firestore.');
         }
       } catch (error: any) {
         // Manejo de errores
@@ -83,9 +73,11 @@ export class LoginPage {
             break;
           default:
             alert('Ocurrió un error. Intenta nuevamente.');
-            console.log(error);
+            console.error('Error de inicio de sesión:', error);
         }
       }
+    } else {
+      alert('Por favor, completa todos los campos correctamente.');
     }
   }
 

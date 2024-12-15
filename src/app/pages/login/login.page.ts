@@ -49,13 +49,20 @@ export class LoginPage {
           .get()
           .toPromise();
 
-        if (userDoc?.exists) {
-          const userData = userDoc.data();
-          // Guardar la sesión en Ionic Storage
-          await this.storage.set('user', {
-            uid: userCredential.user?.uid,
-            email,
-          });
+          if (userDoc?.exists) {
+            const userData = {
+              uid: userCredential.user?.uid,
+              email,
+              
+            };
+
+          
+        // Guardar sesión en Ionic Storage
+        await this.storage.set('user', userData);
+
+
+        // Guardar sesión en localStorage
+        localStorage.setItem('auth-user', JSON.stringify(userData));
 
           // Redirigir al usuario a la página principal
           this.navCtrl.navigateForward('/home');

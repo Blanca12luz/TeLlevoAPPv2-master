@@ -50,12 +50,18 @@ export class RegisterPage {
           patente: '',
         });
 
-        // Guardar sesión en Ionic Storage
-        await this.storage.set('user', {
-          uid: userCredential.user?.uid,
-          name,
-          email,
-        });
+              // Crear objeto de usuario
+      const userData = {
+        uid: userCredential.user?.uid,
+        name,
+        email,
+      };
+
+      // Guardar sesión en Ionic Storage
+      await this.storage.set('user', userData);
+
+            // Guardar sesión en localStorage
+            localStorage.setItem('auth-user', JSON.stringify(userData));
 
         alert('¡Registro exitoso!');
 
